@@ -82,7 +82,10 @@ function configurePins(){
         var trigger = new Gpio(thisPin.pin, 'in', 'both', { debounceTimeout: debounceTime });
         trigger.id = i;
         thisPin.trigger = trigger;
-        trigger.watch((err, value)=> {
+        trigger.watch((err, value) => {
+            console.log(i);
+            //console.log(trigger);
+            //console.log(this);
             handleTriggerUpdate(trigger.id, err, value);
         });
 
@@ -95,6 +98,10 @@ function configurePins(){
         var player = new soundplayer(options);
         player.id = i;
         thisPin.player = player;
+        player.on('complete', () => {
+            console.log(i);
+            handlePlaybackComplete(i);
+        });
     }
 }
 
