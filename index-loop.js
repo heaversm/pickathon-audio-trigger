@@ -26,7 +26,8 @@ function configurePins(){
         var trigger = new Gpio(thisPin.pin, 'in', 'both', { debounceTimeout: debounceTime });
         trigger.id = i; //MH - need to be able to reference this later to reference correct trigger
         thisPin.trigger = trigger;
-        trigger.watch((err, value) => {
+        trigger.watch(function(err, value) {
+	    console.log(this);
             handleTriggerUpdate(i, err, value);
         });
 

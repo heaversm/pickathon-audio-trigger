@@ -13,7 +13,7 @@ var options = {
 var player = new soundplayer(options);
 
 player.on('complete',function(){
-	isPlaying = false;
+	player.play();
 });
 
 function readGPIO(){
