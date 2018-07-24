@@ -7,12 +7,12 @@ var debounceTime = 10;
 
 var pinArray = [
     {
-        pin: 25,
-        track: 'j01.wav',
-        isPlaying: false,
-        isPaused: false,
-        trigger: null,
-        player: null,
+        pin: 25, //GPIO pin
+        track: 'j01.wav', //track name in audio directory
+        isPlaying: false, //is the gpio trigger active?
+        isPaused: false, //is the track paused
+        trigger: null, //ref that will be added to gpio / onoff library
+        player: null, //player instance for this pin
     }
 ];
 
@@ -26,9 +26,8 @@ function configurePins(){
         var trigger = new Gpio(thisPin.pin, 'in', 'both', { debounceTimeout: debounceTime });
         trigger.id = i; //MH - need to be able to reference this later to reference correct trigger
         thisPin.trigger = trigger;
-        trigger.watch(function(err, value) {
-	    console.log(this);
-            handleTriggerUpdate(i, err, value);
+        trigger.watch((err, value)=> {
+            handleTriggerUpdate(trigger.id, err, value);
         });
 
         var options = {
@@ -39,20 +38,20 @@ function configurePins(){
         };
         var player = new soundplayer(options);
         player.id = i; //MH - need to be able to reference this later to reference correct player
-        player.on('complete', (i) => {
-            handlePlaybackComplete(i);
-        });
+        /*player.on('complete', () => {
+            handlePlaybackComplete(player.id);
+        });*/
         thisPin.player = player;
     }
 }
 
 function handlePlaybackComplete(i) {
     console.log('complete', i);
-    pinArray[i].isPlaying = false;
-    //MH - trigger playback here, or configure looping from library -l flag so we don't need to monitor completion?
+    pinArray[i].player.play();
 }
 
 function handleTriggerUpdate(i, err, value) {
+    console.log(i);
     var thisPin = pinArray[i];
     if (value == 0) {
         if (!thisPin.isPlaying) {
