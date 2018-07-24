@@ -7,8 +7,64 @@ var debounceTime = 10;
 
 var pinArray = [
     {
-        pin: 25, //GPIO pin
+        pin: 23, //GPIO pin
         track: 'j01.wav', //track name in audio directory
+        isPlaying: false, //is the gpio trigger active?
+        isPaused: false, //is the track paused
+        trigger: null, //ref that will be added to gpio / onoff library
+        player: null, //player instance for this pin
+    },
+    {
+        pin: 24, //GPIO pin
+        track: 'j02.wav', //track name in audio directory
+        isPlaying: false, //is the gpio trigger active?
+        isPaused: false, //is the track paused
+        trigger: null, //ref that will be added to gpio / onoff library
+        player: null, //player instance for this pin
+    },
+    {
+        pin: 25, //GPIO pin
+        track: 'j03.wav', //track name in audio directory
+        isPlaying: false, //is the gpio trigger active?
+        isPaused: false, //is the track paused
+        trigger: null, //ref that will be added to gpio / onoff library
+        player: null, //player instance for this pin
+    },
+    {
+        pin: 12, //GPIO pin
+        track: 'j04.wav', //track name in audio directory
+        isPlaying: false, //is the gpio trigger active?
+        isPaused: false, //is the track paused
+        trigger: null, //ref that will be added to gpio / onoff library
+        player: null, //player instance for this pin
+    },
+    {
+        pin: 16, //GPIO pin
+        track: 'j05.wav', //track name in audio directory
+        isPlaying: false, //is the gpio trigger active?
+        isPaused: false, //is the track paused
+        trigger: null, //ref that will be added to gpio / onoff library
+        player: null, //player instance for this pin
+    },
+    {
+        pin: 20, //GPIO pin
+        track: 'j06.wav', //track name in audio directory
+        isPlaying: false, //is the gpio trigger active?
+        isPaused: false, //is the track paused
+        trigger: null, //ref that will be added to gpio / onoff library
+        player: null, //player instance for this pin
+    },
+    {
+        pin: 21, //GPIO pin
+        track: 'j07.wav', //track name in audio directory
+        isPlaying: false, //is the gpio trigger active?
+        isPaused: false, //is the track paused
+        trigger: null, //ref that will be added to gpio / onoff library
+        player: null, //player instance for this pin
+    },
+    {
+        pin: 26, //GPIO pin
+        track: 'j08.wav', //track name in audio directory
         isPlaying: false, //is the gpio trigger active?
         isPaused: false, //is the track paused
         trigger: null, //ref that will be added to gpio / onoff library
@@ -24,7 +80,7 @@ function configurePins(){
     for (var i = 0; i < pinArray.length; i++) {
         var thisPin = pinArray[i];
         var trigger = new Gpio(thisPin.pin, 'in', 'both', { debounceTimeout: debounceTime });
-        trigger.id = i; //MH - need to be able to reference this later to reference correct trigger
+        trigger.id = i;
         thisPin.trigger = trigger;
         trigger.watch((err, value)=> {
             handleTriggerUpdate(trigger.id, err, value);
@@ -37,21 +93,16 @@ function configurePins(){
             player: 'aplay'
         };
         var player = new soundplayer(options);
-        player.id = i; //MH - need to be able to reference this later to reference correct player
-        /*player.on('complete', () => {
-            handlePlaybackComplete(player.id);
-        });*/
+        player.id = i;
         thisPin.player = player;
     }
 }
 
 function handlePlaybackComplete(i) {
-    console.log('complete', i);
     pinArray[i].player.play();
 }
 
 function handleTriggerUpdate(i, err, value) {
-    console.log(i);
     var thisPin = pinArray[i];
     if (value == 0) {
         if (!thisPin.isPlaying) {
@@ -70,7 +121,5 @@ function handleTriggerUpdate(i, err, value) {
         }
     }
 }
-
-
 
 init();
